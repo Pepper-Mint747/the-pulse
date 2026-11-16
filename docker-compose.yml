@@ -1,7 +1,9 @@
 services:
   the-pulse:
     build: .
-    image: the-pulse:latest
+    # Set PULSE_IMAGE=<dockerhub-user>/the-pulse:latest in .env to pull the CI-built image;
+    # without it, `docker compose up -d --build` builds locally as before.
+    image: ${PULSE_IMAGE:-the-pulse:latest}
     container_name: the-pulse
     restart: unless-stopped
     env_file: .env                     # WA_API_URL, WA_API_KEY, WA_TO

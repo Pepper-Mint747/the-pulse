@@ -64,6 +64,25 @@ Check what's active with `docker compose run --rm the-pulse schedule`.
 Alert state is kept in the `the-pulse-data` volume.
 To trigger a job by hand, run `docker compose run --rm the-pulse news` (or `kplc`, `rain-morning`, `--dry-run`, and so on).
 
+## Prebuilt image (GitHub Actions → Docker Hub)
+
+`.github/workflows/docker.yml` builds the image for `linux/amd64`, `linux/arm64` and `linux/arm/v7`, which covers 64-bit and 32-bit Pi OS. It runs a smoke test, then pushes `<user>/the-pulse` to Docker Hub.
+
+| Trigger | Tags pushed |
+|---|---|
+| push to `main` | `latest`, `sha-<short>` |
+| tag `v1.2.3` | `1.2.3`, `1.2`, `sha-<short>` |
+| pull request | builds and tests only, no push |
+
+One-time setup, under the GitHub repo's *Settings → Secrets and variables → Actions*:
+- `DOCKERHUB_USERNAME`: your Docker Hub username
+- `DOCKERHUB_TOKEN`: a Docker Hub access token (*Account settings → Personal access tokens*, with Read & Write access)
+
+On the Pi, set `PULSE_IMAGE=<user>/the-pulse:latest` in `.env`, then:
+```bash
+docker compose pull && docker compose up -d
+```
+
 ## Setup without Docker (cron)
 
 ```bash
