@@ -1,0 +1,23 @@
+services:
+  the-pulse:
+    build: .
+    image: the-pulse:latest
+    container_name: the-pulse
+    restart: unless-stopped
+    env_file: .env                     # WA_API_URL, WA_API_KEY, WA_TO
+    environment:
+      TZ: Africa/Nairobi
+    volumes:
+      - ./config.toml:/config/config.toml:ro   # keywords, locations, schedule, feeds
+      - the-pulse-data:/data                    # dedupe state, so alerts survive restarts
+    # Keep it light on a Pi 3B+ (1 GB RAM)
+    mem_limit: 128m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "3"
+
+volumes:
+  the-pulse-data:

@@ -1,0 +1,89 @@
+# Copy to config.toml and fill in the [whatsapp] section.
+
+[whatsapp]
+# Base URL of your OpenWA gateway (without /api). Env WA_API_URL / WA_API_KEY / WA_SESSION / WA_TO override these.
+api_url = "http://192.168.1.50:2785"
+api_key = ""
+# Session name or id from the OpenWA dashboard. Empty = the only connected session
+session = ""
+# Your WhatsApp number in international format + @c.us (no + or leading 0)
+to = "2547XXXXXXXX@c.us"
+
+[locations.home]
+name = "Wangige"
+lat = -1.2196
+lon = 36.7105
+
+[locations.work]
+name = "Westlands"
+lat = -1.2676
+lon = 36.8070
+
+[kplc]
+# Matched against the KPLC planned-interruption PDFs (case and spacing insensitive).
+home_keywords = ["Wangige", "Gathiga", "Kessel Homes", "Njonjo Farm"]
+nearby_keywords = ["Gitaru", "Nyathuna", "Kanyariri", "Kingeero", "Lower Kabete", "Kirangari", "Uthiru"]
+work_keywords = ["Westlands"]
+# Pages scanned for notice PDFs (optional; these are the defaults). Add a URL here if KPLC moves the list again.
+# pages = ["https://www.kplc.co.ke/customer-support", "https://www.kplc.co.ke/power-maintenance-schedule"]
+
+[rain]
+# Commute windows, 24h clock [start, end)
+morning_window = [6, 10]
+evening_window = [15, 20]
+# Alert if any hour in a window reaches either threshold
+probability_threshold = 50   # percent
+mm_threshold = 0.5           # mm of rain in an hour
+# On weekends/holidays, check this daytime window at home instead of the commute. [] = no rain alerts on days off
+weekend_window = [8, 20]
+
+[calendar]
+# Commute alerts only run on these days (and never on Kenyan public holidays)
+workdays = ["mon", "tue", "wed", "thu", "fri"]
+# Holidays the government declares at short notice: "YYYY-MM-DD" = "Name"
+[calendar.extra_holidays]
+# "2026-11-20" = "Special holiday"
+
+[briefing]
+# Exchange rates shown as KES per unit. [] to hide
+currencies = ["USD", "GBP", "EUR"]
+# Headlines included in the morning briefing (0 = none)
+news_items = 5
+
+[nse]
+# Long-term / dividend signals for NSE blue chips (data: afx.kwayisi.org/nse).
+# Stance: 2+ positive signals = 🟢 Accumulate, any negative = 🔴 Wait / avoid, otherwise ⚪ Neutral.
+watchlist = ["SCOM", "EQTY", "KCB", "COOP", "ABSA", "SCBK", "SBIC", "NCBA", "IMH", "EABL", "BAT", "KEGN"]
+high_yield = 8.0        # % dividend yield that counts as a positive
+low_yield = 3.0         # % yield below this counts as a negative
+dip_pct = 10.0          # % below its moving average = possible entry
+stretched_pct = 15.0    # % above its moving average = don't chase
+big_move_pct = 5.0      # daily move worth flagging
+falling_1yr_pct = -25.0 # 1-year return below this = "falling knife" warning
+ma_days = 50            # moving-average length (builds up from the bot's own daily history)
+fundamentals_days = 3   # how often to re-fetch EPS/P/E/dividends per stock (weekly review always refreshes)
+
+[news]
+max_items = 12
+lookback_hours = 14
+# Stories matching these words are pushed to the top and marked with ⭐
+keywords = ["Wangige", "Westlands", "Kikuyu", "Waiyaki", "fuel", "KPLC", "Safaricom"]
+feeds = [
+  "https://nation.africa/kenya/rss.xml",
+  "https://www.standardmedia.co.ke/rss/headlines.php",
+  "https://www.capitalfm.co.ke/news/feed/",
+  "https://www.kenyans.co.ke/feeds/news",
+]
+
+# Used by `python -m the_pulse run` (the Docker container). 24-hour HH:MM, Nairobi time.
+# SCHEDULE_<JOB> env vars (e.g. SCHEDULE_NEWS=07:00,19:30) override these.
+# Remove this section to use the built-in defaults shown here.
+[schedule]
+briefing = ["06:00"]
+rain-morning = []        # standalone rain alert; the briefing already covers it
+news = ["18:00"]
+kplc = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
+rain-evening = ["15:00"]
+kplc-remind = ["19:05"]
+nse-daily = ["15:45"]            # after the 15:00 close, trading days only, changes only
+nse-weekly = ["fri 17:00"]       # "day HH:MM" for weekly jobs

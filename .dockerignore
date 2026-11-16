@@ -1,0 +1,8 @@
+.venv/
+data/
+logs/
+config.toml
+.env
+**/__pycache__/
+*.md
+install.sh
